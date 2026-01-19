@@ -9,12 +9,12 @@ const validateSchema = z.object({
   name: z
     .string()
     .min(3, "Tên khóa học phải có ít nhất 3 ký tự")
-    .max(100, "Tên khóa học không được vượt quá 100 ký tự"),
+    .max(21, "Tên khóa học không được vượt quá 21 ký tự"),
   category: z.string().min(1, "Vui lòng chọn loại khóa học"),
   teacher: z
     .string()
     .min(2, "Tên giáo viên phải có ít nhất 2 ký tự")
-    .max(50, "Tên giáo viên không được vượt quá 50 ký tự"),
+    .max(21, "Tên giáo viên không được vượt quá 21 ký tự"),
 });
 
 type FormValues = z.infer<typeof validateSchema>;
