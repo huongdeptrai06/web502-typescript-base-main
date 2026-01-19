@@ -69,6 +69,12 @@
       "category": "Chuyên ngành",
       "teacher": "qqq",
       "id": 10
+    },
+    {
+      "name": "sss",
+      "category": "Chuyên ngành",
+      "teacher": "ss",
+      "id": 11
     }
   ]
 }

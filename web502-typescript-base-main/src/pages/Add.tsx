@@ -10,11 +10,6 @@ const validateSchema = z.object({
     .string()
     .min(3, "Tên khóa học phải có ít nhất 3 ký tự")
     .max(100, "Tên khóa học không được vượt quá 100 ký tự"),
-  credit: z
-    .number({
-    })
-    .min(1, "Số tín chỉ phải từ 1 trở lên")
-    .max(10, "Số tín chỉ không được vượt quá 10"),
   category: z.string().min(1, "Vui lòng chọn loại khóa học"),
   teacher: z
     .string()
@@ -34,7 +29,6 @@ function AddPage() {
     resolver: zodResolver(validateSchema),
     defaultValues: {
       name: "",
-      credit: 3,
       category: "Chuyên ngành",
       teacher: "",
     },
@@ -58,7 +52,6 @@ function AddPage() {
       <h1 className="text-2xl font-semibold mb-6">Thêm mới khóa học</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Tên khóa học */}
         <div>
           <label htmlFor="name" className="block font-medium mb-1">
             Tên khóa học <span className="text-red-500">*</span>
@@ -81,7 +74,6 @@ function AddPage() {
           )}
         </div>
 
-        {/* Giáo viên */}
         <div>
           <label htmlFor="teacher" className="block font-medium mb-1">
             Giáo viên <span className="text-red-500">*</span>
@@ -104,32 +96,6 @@ function AddPage() {
           )}
         </div>
 
-        {/* Số tín chỉ */}
-        <div>
-          <label htmlFor="credit" className="block font-medium mb-1">
-            Số tín chỉ <span className="text-red-500">*</span>
-          </label>
-          <input
-            {...register("credit", { valueAsNumber: true })}
-            type="number"
-            id="credit"
-            min="1"
-            max="10"
-            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
-              errors.credit
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:ring-blue-500"
-            }`}
-            placeholder="Nhập số tín chỉ"
-          />
-          {errors.credit && (
-            <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
-              <span>{errors.credit.message}</span>
-            </p>
-          )}
-        </div>
-
-        {/* Loại khóa học */}
         <div>
           <label htmlFor="category" className="block font-medium mb-1">
             Loại khóa học <span className="text-red-500">*</span>
