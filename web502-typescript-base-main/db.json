@@ -1,0 +1,60 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "name": "ReactJS Cơ Bản",
+      "credit": 3,
+      "category": "Chuyên ngành",
+      "teacher": "Nguyễn Văn A"
+    },
+    {
+      "id": 2,
+      "name": "TypeScript Nâng Cao",
+      "credit": 3,
+      "category": "Chuyên ngành",
+      "teacher": "Trần Thị B"
+    },
+    {
+      "id": 3,
+      "name": "Cấu trúc dữ liệu và Giải thuật",
+      "credit": 4,
+      "category": "Cơ sở",
+      "teacher": "Lê Văn C"
+    },
+    {
+      "id": 4,
+      "name": "Lập trình C",
+      "credit": 4,
+      "category": "Đại cương",
+      "teacher": "Phạm Văn D"
+    },
+    {
+      "id": 5,
+      "name": "NodeJS Cơ Bản",
+      "credit": 3,
+      "category": "Chuyên ngành",
+      "teacher": "Nguyễn Minh E"
+    },
+    {
+      "id": 6,
+      "name": "Cơ sở dữ liệu",
+      "credit": 3,
+      "category": "Cơ sở",
+      "teacher": "Đỗ Thị F"
+    },
+    {
+      "id": 7,
+      "name": "Lập trình hướng đối tượng Java",
+      "credit": 4,
+      "category": "Chuyên ngành",
+      "teacher": "Hoàng Văn G"
+    },
+    {
+      "id": 8,
+      "name": "Nhập môn Công nghệ thông tin",
+      "credit": 2,
+      "category": "Đại cương",
+      "teacher": "Vũ Thị H"
+    }
+  ]
+}

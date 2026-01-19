@@ -1,7 +1,84 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+// type /interface
+type Course = {
+  id: number;
+  name: string;
+  credit: number;
+  category: string;
+  teacher: string;
+};
+
 function ListPage() {
+  // 1. state
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedTeacher, setSelectedTeacher] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(5);
+  // 2. call api
+
+  useEffect(() => {
+    // axios async await + try catch
+    const getAll = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:3000/courses");
+        console.log(data);
+        setCourses(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAll();
+  }, []);
+
+  const uniqueTeachers = Array.from(
+    new Set(courses.map((course) => course.teacher))
+  ).sort();
+  
+  const filteredCourses = courses.filter((course) => {
+    const matchesName = course.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesTeacher =
+      selectedTeacher === "" || course.teacher === selectedTeacher;
+    return matchesName && matchesTeacher;
+  });
+
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCourses = filteredCourses.slice(startIndex, endIndex);
+
+  useEffect(() => {
+  setCurrentPage(1);
+  }, [searchTerm, selectedTeacher]);
+
+  // 3. xoa 1 item
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Danh sách</h1>
+      <div className="mb-6 flex flex-col md:flex-row gap-4">
+        <input
+          type="text"
+          placeholder="Tìm kiếm theo tên.."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        <select
+          value={selectedTeacher}
+          onChange={(e) => setSelectedTeacher(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+        >
+          <option value="">Tất cả giáo viên</option>
+          {uniqueTeachers.map((teacher) => (
+            <option key={teacher} value={teacher}>
+              {teacher}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full border border-gray-300 rounded-lg">
@@ -12,7 +89,7 @@ function ListPage() {
                 Name
               </th>
               <th className="px-4 py-2 border border-gray-300 text-left">
-                Description
+                Teacher
               </th>
               <th className="px-4 py-2 border border-gray-300 text-left">
                 Actions
@@ -21,15 +98,46 @@ function ListPage() {
           </thead>
 
           <tbody>
-            <tr className="hover:bg-gray-50">
-              <td className="px-4 py-2 border border-gray-300">1</td>
-              <td className="px-4 py-2 border border-gray-300">Mark</td>
-              <td className="px-4 py-2 border border-gray-300">Description</td>
-              <td className="px-4 py-2 border border-gray-300">Edit</td>
-            </tr>
+            {currentCourses.length > 0 ? (
+              currentCourses.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-2 border border-gray-300">{item.id}</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {item.name}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {item.teacher}
+                  </td>
+                  <td className="px-4 py-2 border border-gray-300">Edit</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="px-4 py-8 text-center text-gray-500 border border-gray-300">
+                  Không tìm thấy kết quả nào
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
+      {totalPages > 1 && (
+        <div className="mt-6 flex justify-center items-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-4 py-2 border border-gray-300 rounded-lg ${
+                currentPage === page
+                  ? "bg-blue-500 text-white border-blue-500"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
