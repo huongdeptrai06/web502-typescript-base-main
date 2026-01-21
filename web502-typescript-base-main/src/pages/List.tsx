@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+
 // type /interface
 type Course = {
   id: number;
@@ -33,9 +36,9 @@ function ListPage() {
   }, []);
 
   const uniqueTeachers = Array.from(
-    new Set(courses.map((course) => course.teacher))
+    new Set(courses.map((course) => course.teacher)),
   ).sort();
-  
+
   const filteredCourses = courses.filter((course) => {
     const matchesName = course.name
       .toLowerCase()
@@ -51,10 +54,23 @@ function ListPage() {
   const currentCourses = filteredCourses.slice(startIndex, endIndex);
 
   useEffect(() => {
-  setCurrentPage(1);
+    setCurrentPage(1);
   }, [searchTerm, selectedTeacher]);
 
   // 3. xoa 1 item
+  const handleDelete = async (id: number) => {
+  try {
+    const ok = window.confirm("Bạn có chắc chắn muốn xóa?");
+    if (!ok) return;
+
+    await axios.delete(`http://localhost:3000/courses/${id}`);
+    setCourses(courses.filter((course) => course.id !== id));
+    toast.success("Xóa khóa học thành công");
+  } catch (error) {
+    toast.error("Xóa thất bại");
+  }
+};
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Danh sách</h1>
@@ -101,19 +117,39 @@ function ListPage() {
             {currentCourses.length > 0 ? (
               currentCourses.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border border-gray-300">{item.id}</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    {item.id}
+                  </td>
                   <td className="px-4 py-2 border border-gray-300">
                     {item.name}
                   </td>
                   <td className="px-4 py-2 border border-gray-300">
                     {item.teacher}
                   </td>
-                  <td className="px-4 py-2 border border-gray-300">Edit</td>
+                  <td className="px-4 py-2 border border-gray-300">
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/edit/${item.id}`}
+                        className="px-3 py-1 text-sm bg-blue-400 text-white rounded hover:bg-blue-500 transition"
+                      >
+                        Sửa
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-gray-500 border border-gray-300">
+                <td
+                  colSpan={4}
+                  className="px-4 py-8 text-center text-gray-500 border border-gray-300"
+                >
                   Không tìm thấy kết quả nào
                 </td>
               </tr>

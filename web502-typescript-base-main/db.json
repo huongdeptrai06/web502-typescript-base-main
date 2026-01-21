@@ -1,11 +1,10 @@
 {
   "courses": [
     {
-      "id": 1,
       "name": "ReactJS Cơ Bản",
-      "credit": 3,
       "category": "Chuyên ngành",
-      "teacher": "Nguyễn Văn A"
+      "teacher": "Nguyễn Văn an",
+      "id": 1
     },
     {
       "id": 2,
@@ -55,26 +54,6 @@
       "credit": 2,
       "category": "Đại cương",
       "teacher": "Vũ Thị H"
-    },
-    {
-      "name": "Laptop Dell XPS 13",
-      "credit": 3,
-      "category": "Chuyên ngành",
-      "teacher": "hioa dv",
-      "id": 9
-    },
-    {
-      "name": "qqq",
-      "credit": 3,
-      "category": "Chuyên ngành",
-      "teacher": "qqq",
-      "id": 10
-    },
-    {
-      "name": "sss",
-      "category": "Chuyên ngành",
-      "teacher": "ss",
-      "id": 11
     }
   ]
 }

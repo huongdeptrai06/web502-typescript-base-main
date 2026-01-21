@@ -1,8 +1,9 @@
 import axios from "axios";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const validateSchema = z.object({
@@ -21,9 +22,12 @@ type FormValues = z.infer<typeof validateSchema>;
 
 function AddPage() {
   const navigate = useNavigate();
+  const { id } = useParams(); 
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(validateSchema),
@@ -36,106 +40,107 @@ function AddPage() {
 
   const categories = ["Đại cương", "Cơ sở", "Chuyên ngành"];
 
+  useEffect(() => {
+    if (!id) return;
+
+    const getDetail = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:3000/courses/${id}`
+        );
+        reset(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getDetail();
+  }, [id, reset]);
+
   const onSubmit = async (values: FormValues) => {
     try {
-      await axios.post("http://localhost:3000/courses", values);
-      toast.success("Thêm khóa học thành công!");
+      if (id) {
+        //edit
+        await axios.put(`http://localhost:3000/courses/${id}`, values);
+        toast.success("Cập nhật khóa học thành công");
+      } else {
+        //add
+        await axios.post("http://localhost:3000/courses", values);
+        toast.success("Thêm khóa học thành công");
+      }
       navigate("/list");
     } catch (error) {
-      console.error(error);
-      toast.error("Có lỗi xảy ra khi thêm khóa học");
+      console.log(error);
+      toast.error("Có lỗi xảy ra");
     }
   };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-6">Thêm mới khóa học</h1>
+      <h1 className="text-2xl font-semibold mb-6">
+        {id ? "Cập nhật khóa học" : "Thêm mới khóa học"}
+      </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block font-medium mb-1">
-            Tên khóa học <span className="text-red-500">*</span>
-          </label>
+          <label className="block font-medium mb-1">Tên khóa học *</label>
           <input
             {...register("name")}
-            type="text"
-            id="name"
-            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
-              errors.name
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:ring-blue-500"
+            className={`w-full border px-3 py-2 rounded-lg ${
+              errors.name ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="Nhập tên khóa học"
           />
           {errors.name && (
-            <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
-              <span>{errors.name.message}</span>
-            </p>
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="teacher" className="block font-medium mb-1">
-            Giáo viên <span className="text-red-500">*</span>
-          </label>
+          <label className="block font-medium mb-1">Giáo viên *</label>
           <input
             {...register("teacher")}
-            type="text"
-            id="teacher"
-            className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 ${
-              errors.teacher
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:ring-blue-500"
+            className={`w-full border px-3 py-2 rounded-lg ${
+              errors.teacher ? "border-red-500" : "border-gray-300"
             }`}
-            placeholder="Nhập tên giáo viên"
           />
           {errors.teacher && (
-            <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
-              <span>{errors.teacher.message}</span>
-            </p>
+            <p className="text-red-500 text-sm">{errors.teacher.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="category" className="block font-medium mb-1">
-            Loại khóa học <span className="text-red-500">*</span>
-          </label>
+          <label className="block font-medium mb-1">Loại khóa học *</label>
           <select
             {...register("category")}
-            id="category"
-            className={`w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 ${
-              errors.category
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 focus:ring-blue-500"
+            className={`w-full border px-3 py-2 rounded-lg ${
+              errors.category ? "border-red-500" : "border-gray-300"
             }`}
           >
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
               </option>
             ))}
           </select>
-          {errors.category && (
-            <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
-              <span>⚠</span>
-              <span>{errors.category.message}</span>
-            </p>
-          )}
         </div>
 
-        {/* Submit button */}
         <div className="flex gap-4">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="px-5 py-2 bg-blue-600 text-white rounded-lg"
           >
-            {isSubmitting ? "Đang thêm..." : "Thêm mới"}
+            {isSubmitting
+              ? "Đang xử lý..."
+              : id
+              ? "Cập nhật"
+              : "Thêm mới"}
           </button>
+
           <button
             type="button"
             onClick={() => navigate("/list")}
-            className="px-5 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            className="px-5 py-2 bg-gray-500 text-white rounded-lg"
           >
             Hủy
           </button>

@@ -32,7 +32,7 @@ function AddPage() {
           <Route path="/" element={<List />} />
           <Route path="/list" element={<List />} />
           <Route path="/add" element={<Add />} />
-          <Route path="/edit/:id" element={<Edit />} />
+          <Route path="/edit/:id" element={<Add />} />
         </Routes>
       </div>
 
