@@ -3,179 +3,95 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-// type /interface
-type Course = {
-  id: number;
+type Product = {
+  _id: string;
   name: string;
-  credit: number;
-  category: string;
-  teacher: string;
+  price: number;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 function ListPage() {
-  // 1. state
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedTeacher, setSelectedTeacher] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage] = useState<number>(1);
-  // 2. call api
+  const [products, setProducts] = useState<Product[]>([]);
 
+  // GET ALL
   useEffect(() => {
-    // axios async await + try catch
     const getAll = async () => {
       try {
-        const { data } = await axios.get("http://localhost:3000/courses");
-        console.log(data);
-        setCourses(data);
+        const { data } = await axios.get("http://localhost:3000/api/products");
+        // backend trả: { data: { data: [...] } }
+        setProducts(data.data.data);
       } catch (error) {
         console.log(error);
+        toast.error("Không tải được danh sách!");
       }
     };
     getAll();
   }, []);
 
-  const uniqueTeachers = Array.from(
-    new Set(courses.map((course) => course.teacher)),
-  ).sort();
+  // DELETE
+  const handleDelete = async (id: string) => {
+    try {
+      if (!confirm("Bạn chắc chắn muốn xóa sản phẩm này không?")) return;
 
-  const filteredCourses = courses.filter((course) => {
-    const matchesName = course.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesTeacher =
-      selectedTeacher === "" || course.teacher === selectedTeacher;
-    return matchesName && matchesTeacher;
-  });
+      await axios.delete(`http://localhost:3000/api/products/${id}`);
 
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentCourses = filteredCourses.slice(startIndex, endIndex); 
+      setProducts(products.filter((product) => product._id !== id));
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, selectedTeacher]);
-
-  // 3. xoa 1 item
-  const handleDelete = async (id: number) => {
-  try {
-    const ok = window.confirm("Bạn có chắc chắn muốn xóa?");
-    if (!ok) return;
-
-    await axios.delete(`http://localhost:3000/courses/${id}`);
-    setCourses(courses.filter((course) => course.id !== id));
-    toast.success("Xóa khóa học thành công");
-  } catch (error) {
-    toast.error("Xóa thất bại");
-  }
-};
+      toast.success("Xóa thành công!");
+    } catch (error) {
+      toast.error("Xóa thất bại!");
+    }
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Danh sách</h1>
-      <div className="mb-6 flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo tên.."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        />
-        <select
-          value={selectedTeacher}
-          onChange={(e) => setSelectedTeacher(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-        >
-          <option value="">Tất cả giáo viên</option>
-          {uniqueTeachers.map((teacher) => (
-            <option key={teacher} value={teacher}>
-              {teacher}
-            </option>
-          ))}
-        </select>
-      </div>
+      <h1 className="text-2xl font-semibold mb-4">Danh sách sản phẩm</h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border border-gray-300 rounded-lg">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 border border-gray-300 text-left">ID</th>
-              <th className="px-4 py-2 border border-gray-300 text-left">
-                Name
-              </th>
-              <th className="px-4 py-2 border border-gray-300 text-left">
-                Teacher
-              </th>
-              <th className="px-4 py-2 border border-gray-300 text-left">
-                Actions
-              </th>
+              <th className="px-4 py-2 border border-gray-300">ID</th>
+              <th className="px-4 py-2 border border-gray-300 text-left">Name</th>
+              <th className="px-4 py-2 border border-gray-300 text-left">Price</th>
+              <th className="px-4 py-2 border border-gray-300 text-left">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {currentCourses.length > 0 ? (
-              currentCourses.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.id}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.name}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.teacher}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    <div className="flex gap-2">
-                      <Link
-                        to={`/edit/${item.id}`}
-                        className="px-3 py-1 text-sm bg-blue-400 text-white rounded hover:bg-blue-500 transition"
-                      >
-                        Sửa
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="px-4 py-8 text-center text-gray-500 border border-gray-300"
-                >
-                  Không tìm thấy kết quả nào
+            {products.map((item) => (
+              <tr key={item._id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border border-gray-300">
+                  {item._id}
+                </td>
+                <td className="px-4 py-2 border border-gray-300 text-left">
+                  {item.name}
+                </td>
+                <td className="px-4 py-2 border border-gray-300 text-left">
+                  {item.price}
+                </td>
+                <td className="px-4 py-2 border border-gray-300 text-left">
+                  <Link
+                    to={`/edit/${item._id}`}
+                    className="px-3 py-1 bg-blue-500 text-white rounded inline-block"
+                  >
+                    Sửa
+                  </Link>
+                  <button
+                    className="px-3 py-1 ml-1 bg-red-500 text-white rounded"
+                    onClick={() => handleDelete(item._id)}
+                  >
+                    Xóa
+                  </button>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
       </div>
-      {totalPages > 1 && (
-        <div className="mt-6 flex justify-center items-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 border border-gray-300 rounded-lg ${
-                currentPage === page
-                  ? "bg-blue-500 text-white border-blue-500"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
-
 export default ListPage;
