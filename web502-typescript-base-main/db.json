@@ -7,6 +7,12 @@
       "id": 1
     },
     {
+      "name": "ReactJS Cơ Bản",
+      "category": "Chuyên ngành",
+      "teacher": "Nguyễn Văn an",
+      "id": 11
+    },
+    {
       "id": 2,
       "name": "TypeScript Nâng Cao",
       "credit": 3,

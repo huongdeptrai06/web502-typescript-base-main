@@ -18,7 +18,7 @@ function ListPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTeacher, setSelectedTeacher] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage] = useState<number>(5);
+  const [itemsPerPage] = useState<number>(1);
   // 2. call api
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function ListPage() {
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCourses = filteredCourses.slice(startIndex, endIndex);
+  const currentCourses = filteredCourses.slice(startIndex, endIndex); 
 
   useEffect(() => {
     setCurrentPage(1);
