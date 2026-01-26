@@ -1,16 +1,30 @@
 {
+  "users": [
+    {
+      "email": "tranphuhuong1802@gmail.com",
+      "password": "$2a$10$ksV.kFjmTRsy5ikS7kNNb.pKocr9X4iSs9fH2ig7moUVSUuYxP5iW",
+      "id": 1
+    },
+    {
+      "email": "tranphuhuong122@gmail.com",
+      "password": "$2a$10$/m1CrPUV2bxTu7b2jZWRVOjkN1q8xdX4g6chqBaYX3Ern6T5pEtGa",
+      "id": 2,
+      "username": "Huong"
+    },
+    {
+      "email": "tranphuhuong222@gmail.com",
+      "password": "$2a$10$vIqGtJnMscLDioBITIJK9OGt.xjb98NS5VpPYcHI4Amnejw0BQgdm",
+      "username": "Huong",
+      "confirmPassword": "12345678",
+      "id": 3
+    }
+  ],
   "courses": [
     {
       "name": "ReactJS Cơ Bản",
       "category": "Chuyên ngành",
       "teacher": "Nguyễn Văn an",
       "id": 1
-    },
-    {
-      "name": "ReactJS Cơ Bản",
-      "category": "Chuyên ngành",
-      "teacher": "Nguyễn Văn an",
-      "id": 11
     },
     {
       "id": 2,
@@ -60,6 +74,13 @@
       "credit": 2,
       "category": "Đại cương",
       "teacher": "Vũ Thị H"
+    },
+    {
+      "name": "Laptop Dell XPS 13",
+      "credit": 2,
+      "category": "Cơ sở",
+      "teacher": "huongtp",
+      "id": 12
     }
   ]
 }

@@ -9,11 +9,20 @@ import toast from "react-hot-toast";
 const validateSchema = z.object({
   name: z
     .string()
+    .min(1,"Vui lòng nhập tên Khóa Học")
     .min(3, "Tên khóa học phải có ít nhất 3 ký tự")
     .max(21, "Tên khóa học không được vượt quá 21 ký tự"),
+
+  credit: z
+    .number("Bắt buộc phải kiểu số")
+    .min(1, "Tín chỉ phải >= 1")
+    .max(10, "Tín chỉ không được > 10"),
+
   category: z.string().min(1, "Vui lòng chọn loại khóa học"),
+
   teacher: z
     .string()
+    .min(1,"Vui lòng nhập tên giáo viên")
     .min(2, "Tên giáo viên phải có ít nhất 2 ký tự")
     .max(21, "Tên giáo viên không được vượt quá 21 ký tự"),
 });
@@ -22,7 +31,7 @@ type FormValues = z.infer<typeof validateSchema>;
 
 function AddPage() {
   const navigate = useNavigate();
-  const { id } = useParams(); 
+  const { id } = useParams();
 
   const {
     register,
@@ -33,6 +42,7 @@ function AddPage() {
     resolver: zodResolver(validateSchema),
     defaultValues: {
       name: "",
+      credit: 3,
       category: "Chuyên ngành",
       teacher: "",
     },
@@ -60,11 +70,9 @@ function AddPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       if (id) {
-        //edit
         await axios.put(`http://localhost:3000/courses/${id}`, values);
         toast.success("Cập nhật khóa học thành công");
       } else {
-        //add
         await axios.post("http://localhost:3000/courses", values);
         toast.success("Thêm khóa học thành công");
       }
@@ -92,6 +100,20 @@ function AddPage() {
           />
           {errors.name && (
             <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Tín chỉ *</label>
+          <input
+            type="number"
+            {...register("credit", { valueAsNumber: true })}
+            className={`w-full border px-3 py-2 rounded-lg ${
+              errors.credit ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.credit && (
+            <p className="text-red-500 text-sm">{errors.credit.message}</p>
           )}
         </div>
 
@@ -124,6 +146,7 @@ function AddPage() {
           </select>
         </div>
 
+        {/* BUTTONS */}
         <div className="flex gap-4">
           <button
             type="submit"

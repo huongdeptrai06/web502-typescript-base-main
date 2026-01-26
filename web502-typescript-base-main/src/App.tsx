@@ -3,6 +3,7 @@ import { Link, Routes, Route } from "react-router-dom";
 import Add from "./pages/Add";
 import Edit from "./pages/Edit";
 import List from "./pages/List";
+import AuthPage from "./pages/AuthPage";
 
 function AddPage() {
   return (
@@ -14,14 +15,24 @@ function AddPage() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="hover:text-gray-200">Trang chủ</Link>
-            <Link to="/list" className="hover:text-gray-200">Danh sách</Link>
-            <Link to="/add" className="hover:text-gray-200">Thêm mới</Link>
+            <Link to="/" className="hover:text-gray-200">
+              Trang chủ
+            </Link>
+            <Link to="/list" className="hover:text-gray-200">
+              Danh sách
+            </Link>
+            <Link to="/add" className="hover:text-gray-200">
+              Thêm mới
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/login" className="hover:text-gray-200">Đăng nhập</Link>
-            <Link to="/register" className="hover:text-gray-200">Đăng ký</Link>
+            <Link to="/login" className="hover:text-gray-200">
+              Đăng nhập
+            </Link>
+            <Link to="/register" className="hover:text-gray-200">
+              Đăng ký
+            </Link>
           </div>
         </div>
       </nav>
@@ -33,10 +44,12 @@ function AddPage() {
           <Route path="/list" element={<List />} />
           <Route path="/add" element={<Add />} />
           <Route path="/edit/:id" element={<Add />} />
+          <Route path="/login" element={<AuthPage isLogin  />} />
+          <Route path="/register" element={<AuthPage  />} />
         </Routes>
       </div>
 
-      <Toaster />
+      <Toaster /> 
     </>
   );
 }
